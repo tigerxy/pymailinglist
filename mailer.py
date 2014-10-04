@@ -52,7 +52,7 @@ for mailnr in daten[0].split():
         imap.copy(mailnr, 'INBOX.fehler')
         imap.store(mailnr, '+FLAGS', '\\Deleted')
         sentError += 1
-    elif mail not in verteiler:
+    elif mail not in mailingList:
         # replace headers (could do other processing here)
         #message.replace_header("Reply-To", from_addr)
         message.add_header('Reply-To', fromAddress)
@@ -60,7 +60,7 @@ for mailnr in daten[0].split():
 
         # open authenticated SMTP connection and send message with
         # specified envelope from and to addresses
-        for toAddress in admins:
+        for toAddress in adminsList:
             message.replace_header("To", toAddress)
             smtp.sendmail(fromAddress, toAddress, message.as_string())
             
@@ -75,7 +75,7 @@ for mailnr in daten[0].split():
 
         # open authenticated SMTP connection and send message with
         # specified envelope from and to addresses
-        for toAddress in verteiler:
+        for toAddress in mailingList:
             message.replace_header("To", toAddress)
             smtp.sendmail(fromAddress, toAddress, message.as_string())
 
