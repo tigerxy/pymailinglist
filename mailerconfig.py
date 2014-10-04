@@ -4,6 +4,7 @@
 host = "mail.me.com"
 user = "user"
 passwd = "pw"
-from_addr = "list@me.com"
+fromAddress = "list@me.com"
+listName = "PyMailinglist"
 verteiler = ['user1@me.com','user2@me.com']
 admins = ['admin@me.com']
