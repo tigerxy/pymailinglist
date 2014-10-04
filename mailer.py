@@ -26,16 +26,16 @@ def footer():
 print "Content-Type: text/html"
 header("Mails verarbeiten")
 
-fehler = 0
-nichtinverteiler = 0
-gesendet = 0
+sentOk = 0
+sentNotInList = 0
+sentError = 0
 
-smtp = smtplib.SMTP(host)
+smtp = smtplib.SMTP(smtpHost)
 smtp.starttls()
-smtp.login(user, passwd)
+smtp.login(smtpUser, smtpPassword)
 
-imap = imaplib.IMAP4_SSL(host)
-imap.login(user, passwd)
+imap = imaplib.IMAP4_SSL(imapHost)
+imap.login(imapUser, imapPassword)
 
 imap.select('INBOX')
 status, daten = imap.search(None, "ALL") 
@@ -51,7 +51,7 @@ for mailnr in daten[0].split():
     if mail.endswith(host):
         imap.copy(mailnr, 'INBOX.fehler')
         imap.store(mailnr, '+FLAGS', '\\Deleted')
-        fehler += 1
+        sentError += 1
     elif mail not in verteiler:
         # replace headers (could do other processing here)
         #message.replace_header("Reply-To", from_addr)
@@ -60,13 +60,13 @@ for mailnr in daten[0].split():
 
         # open authenticated SMTP connection and send message with
         # specified envelope from and to addresses
-        for empfaenger in admins:
-            message.replace_header("To", empfaenger)
-            smtp.sendmail(fromAddress, empfaenger, message.as_string())
+        for toAddress in admins:
+            message.replace_header("To", toAddress)
+            smtp.sendmail(fromAddress, toAddress, message.as_string())
             
         imap.copy(mailnr, 'INBOX.nichtinverteiler')
         imap.store(mailnr, '+FLAGS', '\\Deleted')
-        nichtinverteiler += 1
+        sentNotInList += 1
     else:
         # replace headers (could do other processing here)
         #message.replace_header("Reply-To", from_addr)
@@ -75,17 +75,17 @@ for mailnr in daten[0].split():
 
         # open authenticated SMTP connection and send message with
         # specified envelope from and to addresses
-        for empfaenger in verteiler:
-            message.replace_header("To", empfaenger)
-            smtp.sendmail(fromAddress, empfaenger, message.as_string())
+        for toAddress in verteiler:
+            message.replace_header("To", toAddress)
+            smtp.sendmail(fromAddress, toAddress, message.as_string())
 
         imap.copy(mailnr, 'INBOX.gesendet')
         imap.store(mailnr, '+FLAGS', '\\Deleted')
-        gesendet += 1
+        sentOk += 1
     
-print "<p>", gesendet, "mail moved to INBOX.gesendet</p>"
-print "<p>", nichtinverteiler, "mail moved to INBOX.nichtinverteiler</p>"
-print "<p>", fehler, "mail moved to INBOX.fehler</p>"
+print "<p>", sentOk, "mail moved to INBOX.gesendet</p>"
+print "<p>", sentNotInList, "mail moved to INBOX.nichtinverteiler</p>"
+print "<p>", sentError, "mail moved to INBOX.fehler</p>"
 
 imap.expunge()
 imap.close()
