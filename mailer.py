@@ -15,6 +15,7 @@ import datetime
 import smtplib
 
 from mailerconfig import *
+import mailerlib
 
 def header(title):
     print 'Content-type: text/html\n'
@@ -30,12 +31,8 @@ sentOk = 0
 sentNotInList = 0
 sentError = 0
 
-smtp = smtplib.SMTP(smtpHost)
-smtp.starttls()
-smtp.login(smtpUser, smtpPassword)
-
-imap = imaplib.IMAP4_SSL(imapHost)
-imap.login(imapUser, imapPassword)
+smtp = mailerlib.smtp_open()
+imap = mailerlib.imap_open()
 
 imap.select('INBOX')
 status, daten = imap.search(None, "ALL") 
@@ -48,7 +45,7 @@ for mailnr in daten[0].split():
     from email.utils import parseaddr
     name, mail = parseaddr(message['From'])
 	
-    if mail.endswith(host):
+    if mail.endswith(smtpHost):
         imap.copy(mailnr, 'INBOX.fehler')
         imap.store(mailnr, '+FLAGS', '\\Deleted')
         sentError += 1
@@ -89,7 +86,7 @@ print "<p>", sentError, "mail moved to INBOX.fehler</p>"
 
 imap.expunge()
 imap.close()
-imap.logout()
+mailerlib.imap_close(imap)
+mailerlib.smtp_close(smtp)
 
-smtp.quit()
 footer()
