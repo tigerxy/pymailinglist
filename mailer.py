@@ -55,14 +55,14 @@ for mailnr in daten[0].split():
     elif mail not in verteiler:
         # replace headers (could do other processing here)
         #message.replace_header("Reply-To", from_addr)
-        message.add_header('Reply-To', from_addr)
-        message.replace_header("Subject", "[CVJM-Forchheim][SPAM?] " + message['Subject'])
+        message.add_header('Reply-To', fromAddress)
+        message.replace_header("Subject", "[" + listName + "][SPAM?] " + message['Subject'])
 
         # open authenticated SMTP connection and send message with
         # specified envelope from and to addresses
         for empfaenger in admins:
             message.replace_header("To", empfaenger)
-            smtp.sendmail(from_addr, empfaenger, message.as_string())
+            smtp.sendmail(fromAddress, empfaenger, message.as_string())
             
         imap.copy(mailnr, 'INBOX.nichtinverteiler')
         imap.store(mailnr, '+FLAGS', '\\Deleted')
@@ -70,14 +70,14 @@ for mailnr in daten[0].split():
     else:
         # replace headers (could do other processing here)
         #message.replace_header("Reply-To", from_addr)
-        message.add_header('Reply-To', from_addr)
-        message.replace_header("Subject", "[CVJM-Forchheim] " + message['Subject'])
+        message.add_header('Reply-To', fromAddress)
+        message.replace_header("Subject", "[" + listName + "] " + message['Subject'])
 
         # open authenticated SMTP connection and send message with
         # specified envelope from and to addresses
         for empfaenger in verteiler:
             message.replace_header("To", empfaenger)
-            smtp.sendmail(from_addr, empfaenger, message.as_string())
+            smtp.sendmail(fromAddress, empfaenger, message.as_string())
 
         imap.copy(mailnr, 'INBOX.gesendet')
         imap.store(mailnr, '+FLAGS', '\\Deleted')
