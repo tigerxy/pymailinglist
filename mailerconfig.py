@@ -1,10 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-host = "mail.me.com"
-user = "user"
-passwd = "pw"
+imapHost = "mail.me.com"
+imapUser = "user"
+imapPassword = "pw"
+
+smtpHost = "mail.me.com"
+smtpUser = "user"
+smtpPassword = "pw"
+
 fromAddress = "list@me.com"
 listName = "PyMailinglist"
-verteiler = ['user1@me.com','user2@me.com']
-admins = ['admin@me.com']
+
+mailingList = ['user1@me.com','user2@me.com']
+adminsList = ['admin@me.com']
