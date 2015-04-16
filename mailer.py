@@ -28,6 +28,9 @@ for mailnr in daten[0].split():
 
     from email.utils import parseaddr
     name, mail = parseaddr(message['From'])
+    
+    if message['Subject'] is None:
+        message['Subject'] = ""
 	
     if mail.endswith(smtpHost):
         imap.copy(mailnr, 'INBOX.fehler')
